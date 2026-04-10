@@ -1,5 +1,6 @@
 require('dotenv').config(); // MUST be first — loads .env before any other module
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const config = require('./config');
@@ -38,7 +39,26 @@ app.use(express.json({ limit: '10mb' }));
 
 // Health check
 app.head("/", (req, res) => res.status(200).end());
-app.get('/health', (req, res) => res.json({ status: "ok", env: config.env }));
+app.get('/health', (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  const status = dbStatus === 'connected' ? 'healthy' : 'unhealthy';
+  
+  const healthData = {
+    status,
+    database: dbStatus,
+    uptime: `${process.uptime().toFixed(2)}s`,
+    memory: `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
+    timestamp: new Date().toISOString(),
+    env: config.env,
+    version: "1.0.0"
+  };
+
+  if (status === 'healthy') {
+    res.status(200).json(healthData);
+  } else {
+    res.status(503).json(healthData);
+  }
+});
 
 // API Routes
 app.use('/api/auth', authRoutes);
