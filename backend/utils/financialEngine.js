@@ -3,7 +3,13 @@
  * Safely converts a value to a positive number.
  * Handles strings, nulls, and undefined by returning 0 if invalid.
  */
-const safe = (val) => (!isNaN(Number(val)) && Number(val) > 0 ? Number(val) : 0);
+const safe = (val) => {
+  if (val === null || val === undefined) return 0;
+  // Strip commas if string
+  const clean = typeof val === 'string' ? val.replace(/,/g, '') : val;
+  const num = Number(clean);
+  return !isNaN(num) && num > 0 ? num : 0;
+};
 
 // -------- BASIC CALCULATIONS --------
 const calculateMonthlyExpenses = (profile) => {
@@ -265,7 +271,7 @@ const calculateCibilAdvice = (profile) => {
   const paymentScore = Math.min(35, Math.max(0, paymentRatio * 35));
 
   // 2. CREDIT UTILIZATION (Max 30)
-  const utilization = totalLimit > 0 ? (usedCredit / totalLimit) : 0;
+  const utilization = totalLimit > 0 ? (usedCredit / totalLimit) : (usedCredit > 0 ? 1 : 0);
   const utilScore = Math.max(0, 30 - (utilization * 30));
 
   // 3. CREDIT HISTORY LENGTH (Max 15)
@@ -363,6 +369,7 @@ const calculateTaxAdvice = (profile) => {
 
 // -------- FINAL EXPORT --------
 module.exports = {
+  safe,
   calculateMonthlyExpenses,
   calculateTotalAssets,
   calculateTotalLiabilities,

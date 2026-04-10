@@ -7,7 +7,7 @@ const ApiError = require('../utils/ApiError');
 
 const debugLog = (msg) => {
   try {
-    const logPath = 'c:\\Users\\ganes\\Downloads\\perFin-main_final\\perfin-main\\backend\\debug.log';
+    const logPath = path.join(process.cwd(), 'debug.log');
     const timestamp = new Date().toISOString();
     fs.appendFileSync(logPath, `[${timestamp}] ${msg}\n`);
   } catch (err) {

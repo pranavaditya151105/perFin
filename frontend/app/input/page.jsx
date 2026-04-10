@@ -319,6 +319,8 @@ export default function InputPage() {
     });
   };
 
+  const [focusedIncome, setFocusedIncome] = useState(null); // { index: number, field: string }
+
   const updateIncome = (i, field, value) => {
     let cleaned = value;
     if (field === 'amount') {
@@ -562,8 +564,10 @@ export default function InputPage() {
                         <label className="input-label" style={{ fontSize: 10 }}>Annual Amount (₹)</label>
                         <input 
                           className="input-field" 
-                          value={toINRDisplay(inc.amount)} 
+                          value={focusedIncome?.index === i && focusedIncome?.field === 'amount' ? inc.amount : toINRDisplay(inc.amount)} 
                           onChange={e => updateIncome(i, 'amount', e.target.value)}
+                          onFocus={() => setFocusedIncome({ index: i, field: 'amount' })}
+                          onBlur={() => setFocusedIncome(null)}
                           placeholder="0"
                           style={{ height: 38, fontSize: 13 }}
                         />
@@ -618,7 +622,7 @@ export default function InputPage() {
               <InputGroup label="Utilities" name="utilities_expense" value={profile.utilities_expense} onChange={update} placeholder="Amount" />
               <InputGroup label="Entertainment" name="entertainment_expense" value={profile.entertainment_expense} onChange={update} placeholder="Amount" />
               <InputGroup label="Other Expenses" name="other_expense" value={profile.other_expense} onChange={update} placeholder="Amount" />
-              {/* <div className="md:col-span-2"><InputGroup label="Annual Tax Deductions (80C etc.)" name="total_deductions" value={profile.total_deductions} onChange={update} placeholder="Amount" /></div> */}
+              <div className="md:col-span-2"><InputGroup label="Annual Tax Deductions (80C, etc.)" name="total_deductions" value={profile.total_deductions} onChange={update} placeholder="Amount" /></div>
               
               {/* Live Tax Preview Card */}
               <div className="md:col-span-2" style={{ 
