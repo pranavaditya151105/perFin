@@ -19,7 +19,18 @@ const app = express();
 
 // Security Middleware
 app.use(helmet());
-app.use(cors({ origin: config.env === 'production' ? false : true }));
+
+// CORS configuration: allow all in development, restricted in production
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:3000',
+  /\.vercel\.app$/ // Allow any Vercel preview/production branch
+];
+
+app.use(cors({
+  origin: config.env === 'production' ? allowedOrigins : true,
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // Health check
