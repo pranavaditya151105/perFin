@@ -20,6 +20,7 @@ const STEPS = ['Personal Info', 'Income & Expenses', 'Assets', 'Liabilities', 'C
 
 const defaultProfile = {
   name: '', age: '', occupation: '', location: '', marital_status: 'Single',
+  incomes: [{ label: 'Primary Salary', amount: '' }],
   monthly_income: '',
   housing_expense: '', food_expense: '', transport_expense: '',
   utilities_expense: '', entertainment_expense: '', other_expense: '',
@@ -170,13 +171,20 @@ export default function InputPage() {
   useEffect(() => {
     const loadProfile = async () => {
       if (storedProfile) {
-        setLocalProfile(storedProfile);
+        setLocalProfile({
+          ...storedProfile,
+          incomes: storedProfile.incomes || [{ label: 'Primary Salary', amount: storedProfile.monthly_income ? String(Number(storedProfile.monthly_income)*12) : '' }]
+        });
       } else if (hasHydrated && isAuthenticated) {
         try {
           const data = await fetchRawProfile();
           if (data) {
-            setLocalProfile(data);
-            setProfile(data);
+            const enriched = {
+              ...data,
+              incomes: data.incomes || [{ label: 'Primary Salary', amount: data.monthly_income ? String(Number(data.monthly_income)*12) : '' }]
+            };
+            setLocalProfile(enriched);
+            setProfile(enriched);
           }
         } catch (err) {
           console.log("No profile on server yet", err);
@@ -205,10 +213,13 @@ export default function InputPage() {
         return (value === undefined || value === null) ? fallback : value;
       };
 
-      setLocalProfile(prev => ({
         ...prev,
         // Map backend keys from the new nested structure (v2.0)
-        monthly_income: (Number(safeGet(data, 'metrics.avg_monthly_income')) || 0) + (Number(prev.monthly_income) || 0) || prev.monthly_income,
+        incomes: [{ 
+          label: 'Primary Salary (Auto-filled)', 
+          amount: String((Number(safeGet(data, 'metrics.avg_monthly_income')) || 0) * 12) 
+        }],
+        monthly_income: String(Number(safeGet(data, 'metrics.avg_monthly_income')) || 0),
         
         housing_expense: (Number(safeGet(data, 'expenses.housing')) || 0) + (Number(prev.housing_expense) || 0) || prev.housing_expense,
         food_expense: (Number(safeGet(data, 'expenses.food')) || 0) + (Number(prev.food_expense) || 0) || prev.food_expense,
@@ -298,8 +309,48 @@ export default function InputPage() {
   const update = (e) => {
     const { name, value, type } = e.target;
     // For numbers, we keep them in the local state to allow empty strings and handle leading zeros naturally
-    setLocalProfile(prev => ({ ...prev, [name]: type === 'number' ? value : value }));
+    setLocalProfile(prev => {
+      const newProfile = { ...prev, [name]: type === 'number' ? value : value };
+      
+      // If we updated income relevant fields, re-derive monthly_income if needed? 
+      // Actually, it's better to calculate monthly_income as a sum of annual incomes / 12 and keep it in sync.
+      return newProfile;
+    });
   };
+
+  const updateIncome = (i, field, value) => {
+    let cleaned = value;
+    if (field === 'amount') {
+      cleaned = value.replace(/,/g, '').replace(/[^0-9.]/g, '');
+    }
+    setLocalProfile(prev => {
+      const incomes = [...prev.incomes];
+      incomes[i] = { ...incomes[i], [field]: cleaned };
+      
+      // Calculate total annual and update monthly_income
+      const totalAnnual = incomes.reduce((sum, inc) => sum + (Number(inc.amount) || 0), 0);
+      return { 
+        ...prev, 
+        incomes, 
+        monthly_income: String(Math.round(totalAnnual / 12)) 
+      };
+    });
+  };
+
+  const addIncomeSource = () => setLocalProfile(prev => ({
+    ...prev,
+    incomes: [...prev.incomes, { label: '', amount: '' }]
+  }));
+
+  const removeIncomeSource = (i) => setLocalProfile(prev => {
+    const incomes = prev.incomes.filter((_, idx) => idx !== i);
+    const totalAnnual = incomes.reduce((sum, inc) => sum + (Number(inc.amount) || 0), 0);
+    return { 
+      ...prev, 
+      incomes, 
+      monthly_income: String(Math.round(totalAnnual / 12)) 
+    };
+  });
 
   const updateGoal = (i, field, value) => {
     let cleaned = value;
@@ -345,6 +396,11 @@ export default function InputPage() {
         time_horizon_years: toNum(g.time_horizon_years),
         current_savings_for_goal: toNum(g.current_savings_for_goal),
         monthly_investment: toNum(g.monthly_investment),
+      }));
+
+      sanitized.incomes = (sanitized.incomes).map((inc) => ({
+        ...inc,
+        amount: toNum(inc.amount)
       }));
 
       setProfile(sanitized);
@@ -476,12 +532,82 @@ export default function InputPage() {
           {step === 1 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="md:col-span-2">
-                <p style={secHead}>Monthly Income</p>
-                <InputGroup label="Monthly Take-Home Income" name="monthly_income" value={profile.monthly_income} onChange={update} placeholder="Amount" />
-                {profile.monthly_income > 0 && (
-                  <p style={{ fontSize: 11, color: OLIVE, marginTop: 4, fontWeight: 500 }}>
-                    💡 That is ₹{(profile.monthly_income * 12).toLocaleString('en-IN')} per year.
-                  </p>
+                <p style={secHead}>Annual Income Sources</p>
+                <p style={{ fontSize: 11, color: MUTED, marginBottom: 12 }}>Enter your gross annual income (pre-tax). We will estimate the tax for you.</p>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {profile.incomes.map((inc, i) => (
+                    <div key={i} style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: 'minmax(120px, 1fr) 1fr auto', 
+                      gap: 10, 
+                      alignItems: 'end',
+                      background: 'rgba(0,0,0,0.02)',
+                      padding: 12,
+                      borderRadius: 8,
+                      border: '1px solid rgba(0,0,0,0.04)'
+                    }}>
+                      <div>
+                        <label className="input-label" style={{ fontSize: 10 }}>Source Name</label>
+                        <input 
+                          className="input-field" 
+                          value={inc.label} 
+                          onChange={e => updateIncome(i, 'label', e.target.value)}
+                          placeholder="Salary, Rent, etc."
+                          style={{ height: 38, fontSize: 13 }}
+                        />
+                      </div>
+                      <div>
+                        <label className="input-label" style={{ fontSize: 10 }}>Annual Amount (₹)</label>
+                        <input 
+                          className="input-field" 
+                          value={toINRDisplay(inc.amount)} 
+                          onChange={e => updateIncome(i, 'amount', e.target.value)}
+                          placeholder="0"
+                          style={{ height: 38, fontSize: 13 }}
+                        />
+                      </div>
+                      {profile.incomes.length > 1 && (
+                        <button 
+                          onClick={() => removeIncomeSource(i)}
+                          style={{ 
+                            background: 'rgba(139,58,42,0.1)', 
+                            color: '#8B3A2A', 
+                            border: 'none', 
+                            borderRadius: '50%',
+                            width: 28,
+                            height: 28,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            marginBottom: 5
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                <button 
+                  className="btn-ghost" 
+                  onClick={addIncomeSource}
+                  style={{ width: '100%', borderStyle: 'dashed', marginTop: 12, fontSize: 12, padding: '8px' }}
+                >
+                  + Add Another Income Source
+                </button>
+
+                {Number(profile.monthly_income) > 0 && (
+                  <div style={{ marginTop: 20, padding: 12, background: 'rgba(163,94,71,0.08)', borderRadius: 8, borderLeft: `3px solid ${OLIVE}` }}>
+                    <p style={{ fontSize: 13, color: DEEP, fontWeight: 600 }}>
+                      Total Annual Income: ₹{profile.incomes.reduce((s, i) => s + (Number(i.amount)||0), 0).toLocaleString('en-IN')}
+                    </p>
+                    <p style={{ fontSize: 11, color: OLIVE, marginTop: 2 }}>
+                      Monthly Take-home (Estimated): ₹{Number(profile.monthly_income).toLocaleString('en-IN')}
+                    </p>
+                  </div>
                 )}
               </div>
               <div className="md:col-span-2"><p style={secHead}>Monthly Expenses</p></div>

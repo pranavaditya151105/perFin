@@ -10,6 +10,11 @@ const UserSchema = new mongoose.Schema({
   location: { type: String, trim: true },
   marital_status: { type: String, enum: ['Single', 'Married', 'Divorced'], default: 'Single' },
   income: {
+    sources: [{
+      label: { type: String, trim: true },
+      amount: { type: Number, min: 0 }
+    }],
+    total_annual: { type: Number, min: 0, default: 0 },
     monthly_income: { type: Number, min: 0, default: 0 }
   },
   expenses: {

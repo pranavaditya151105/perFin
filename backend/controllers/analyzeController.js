@@ -78,12 +78,21 @@ const analyzeProfile = catchAsync(async (req, res) => {
   };
 
   // Persist to MongoDB
+  const totalAnnual = (profile.incomes && Array.isArray(profile.incomes))
+    ? profile.incomes.reduce((sum, inc) => sum + (Number(inc.amount) || 0), 0)
+    : (Number(profile.monthly_income) || 0) * 12;
+
   await User.updateOne(
     { _id: currentUserId },
     {
       $set: {
         latest_analysis: response,
         profile: profile,
+        income: {
+          sources: profile.incomes || [],
+          total_annual: totalAnnual,
+          monthly_income: Number(profile.monthly_income) || 0
+        }
       },
     }
   );

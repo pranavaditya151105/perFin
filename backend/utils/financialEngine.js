@@ -43,7 +43,11 @@ const calculateHealthScore = (profile) => {
   const monthlyIncome = safe(profile.monthly_income);
   const monthlyExpenses = calculateMonthlyExpenses(profile);
   const monthlySurplus = monthlyIncome - monthlyExpenses;
-  const annualIncome = monthlyIncome * 12;
+  
+  // Calculate total annual from sources if available, otherwise fallback to monthly * 12
+  const annualIncome = (profile.incomes && Array.isArray(profile.incomes))
+    ? profile.incomes.reduce((sum, inc) => sum + safe(inc.amount), 0)
+    : monthlyIncome * 12;
 
   // 1. SAVINGS SCORE (Max 25)
   // SavingsRate = (Income - Expenses) / Income
@@ -214,7 +218,9 @@ const calculateGoalResult = (goal, profile) => {
 // -------- ADVISORY LOGIC --------
 
 const calculateInsuranceAdvice = (profile) => {
-  const annualIncome = safe(profile.monthly_income) * 12;
+  const annualIncome = (profile.incomes && Array.isArray(profile.incomes))
+    ? profile.incomes.reduce((sum, inc) => sum + safe(inc.amount), 0)
+    : safe(profile.monthly_income) * 12;
   const lifeCover = annualIncome * 10;
   
   let healthCover, advice;
@@ -338,7 +344,9 @@ const calculateOldTax = (income, deductions) => {
 };
 
 const calculateTaxAdvice = (profile) => {
-  const annualIncome = safe(profile.monthly_income) * 12;
+  const annualIncome = (profile.incomes && Array.isArray(profile.incomes))
+    ? profile.incomes.reduce((sum, inc) => sum + safe(inc.amount), 0)
+    : safe(profile.monthly_income) * 12;
   const oldTax = calculateOldTax(annualIncome, profile.total_deductions);
   const newTax = calculateNewTax(annualIncome);
 
