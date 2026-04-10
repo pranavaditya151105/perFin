@@ -119,7 +119,7 @@ export default function SignupPage() {
       await axios.post(`${API_BASE_URL}/otp/send-otp`, { email });
       setStep('OTP');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to send verification code. Try again.');
+      setError(err.response?.data?.message || err.response?.data?.detail || 'Failed to send verification code. Try again.');
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +134,7 @@ export default function SignupPage() {
       await axios.post(`${API_BASE_URL}/otp/verify-otp`, { email, otp });
       setStep('PASSWORD');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid or expired code.');
+      setError(err.response?.data?.message || err.response?.data?.detail || 'Invalid or expired code.');
     } finally {
       setIsLoading(false);
     }
@@ -151,8 +151,13 @@ export default function SignupPage() {
     try {
       await axios.post(`${API_BASE_URL}/auth/signup`, { email, password });
       const { data } = await api.post('auth/login', { email, password });
+      
+      // Clear store before setting new auth
       usePerFinStore.getState().reset();
-      setAuth({ id: 'temp-id', email }, data.access_token);
+      
+      // Use actual user data from the login response
+      setAuth(data.user, data.access_token);
+
       try {
         const profile = await getProfile();
         setAnalysis(profile);
@@ -161,7 +166,7 @@ export default function SignupPage() {
         router.push('/input');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Signup failed. Please try again.');
+      setError(err.response?.data?.message || err.response?.data?.detail || 'Signup failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

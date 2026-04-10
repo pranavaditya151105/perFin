@@ -109,7 +109,14 @@ const login = catchAsync(async (req, res) => {
   // Create access token
   const accessToken = createAccessToken({ sub: user.email, id: user._id });
 
-  res.json({ access_token: accessToken, token_type: "bearer" });
+  res.json({ 
+    access_token: accessToken, 
+    token_type: "bearer",
+    user: {
+      id: user._id,
+      email: user.email
+    }
+  });
 });
 
 const sendOTP = catchAsync(async (req, res) => {

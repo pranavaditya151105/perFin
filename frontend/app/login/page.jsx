@@ -109,17 +109,22 @@ function LoginContent() {
     setIsLoading(true);
     try {
       const { data } = await api.post('auth/login', { email, password });
+      
+      // Clear store before setting new auth
       usePerFinStore.getState().reset();
-      setAuth({ id: 'temp-id', email }, data.access_token);
+      
+      // Use actual user data from the login response
+      setAuth(data.user, data.access_token);
+
       try {
         const profile = await getProfile();
         setAnalysis(profile);
         router.push('/dashboard');
       } catch (pErr) {
-        router.push(pErr.response?.status === 404 ? '/input' : '/input');
+        router.push('/input');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Incorrect email or password');
+      setError(err.response?.data?.message || err.response?.data?.detail || 'Incorrect email or password');
     } finally {
       setIsLoading(false);
     }
