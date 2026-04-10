@@ -35,8 +35,12 @@ const sendOTPEmail = async (email, otp) => {
     
     // Note: Resend requires a verified domain to send from a custom email.
     // onboarding@resend.dev is the default allowed sender for unverified accounts.
+    const fromEmail = config.resend.fromEmail.includes('<') 
+      ? config.resend.fromEmail 
+      : `PerFin <${config.resend.fromEmail}>`;
+
     const { data: resendData, error } = await resend.emails.send({
-      from: "PerFin <onboarding@resend.dev>",
+      from: fromEmail,
       to: email,
       subject: "PerFin Email Working 🚀 - Your OTP",
       html: `<b>Your email setup is successful!</b><br><br>Your OTP code for PerFin is: <strong>${otp}</strong><br><br>Valid for 10 minutes.`
