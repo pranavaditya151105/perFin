@@ -164,6 +164,11 @@ function LoginContent() {
                 Sign up
               </Link>
             </div>
+            <div className="text-center">
+              <Link href="/forgot-password" size="sm" className="text-xs text-stone-400 hover:text-[#A35E47] transition-colors">
+                Forgot your password?
+              </Link>
+            </div>
           </motion.form>
         ) : (
           <motion.form
