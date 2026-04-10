@@ -193,6 +193,11 @@ function LoginContent() {
                 </button>
               }
             />
+            <div className="flex justify-end">
+              <Link href="/forgot-password" size="sm" className="text-xs text-stone-500 hover:text-[#A35E47] transition-colors">
+                Forgot password?
+              </Link>
+            </div>
             <AuthError message={error} />
             <AuthButton loading={isLoading}>Sign in</AuthButton>
             <button

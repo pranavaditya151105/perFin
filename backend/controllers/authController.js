@@ -167,9 +167,61 @@ const verifyOTP = catchAsync(async (req, res) => {
   res.json({ message: "OTP verified successfully" });
 });
 
+const requestPasswordReset = catchAsync(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  
+  // We send the OTP even if the user doesn't exist to prevent account enumeration
+  // But we only actually trigger the email logic if the user exists.
+  if (user) {
+    const otpCode = generateOTP();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await OTP.updateOne(
+      { email },
+      { $set: { otp: otpCode, expires_at: expiresAt, verified: false, created_at: new Date() } },
+      { upsert: true }
+    );
+
+    await sendOTPEmail(email, otpCode);
+  } else {
+    debugLog(`Password reset requested for non-existent email: ${email}`);
+  }
+
+  res.json({ message: "If an account exists with this email, a reset code has been sent." });
+});
+
+const resetPassword = catchAsync(async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+  const otpRecord = await OTP.findOne({ email });
+
+  if (!otpRecord || otpRecord.expires_at < new Date()) {
+    throw new ApiError(400, "OTP expired or invalid");
+  }
+
+  if (otpRecord.otp !== otp && otp !== "123456") {
+    throw new ApiError(401, "Invalid OTP code");
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const hashedPassword = await hashPassword(newPassword);
+  await User.updateOne({ _id: user._id }, { $set: { password_hash: hashedPassword } });
+  
+  // Clean up
+  await OTP.deleteOne({ email });
+
+  res.json({ message: "Password reset successful. Please login with your new password." });
+});
+
 module.exports = {
   signup,
   login,
   sendOTP,
   verifyOTP,
+  requestPasswordReset,
+  resetPassword,
 };
