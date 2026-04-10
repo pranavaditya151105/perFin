@@ -24,7 +24,7 @@ export default function HeroBeams() {
           animate="visible"
           variants={fadeUp}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#A35E47]/20 border border-[#A35E47]/40 rounded-full text-sm font-semibold text-[#A35E47] mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#A35E47]/20 border border-[#A35E47]/40 rounded-full text-sm font-semibold text-[#A35E47] mb-8 mx-auto">
             <span className="w-2 h-2 rounded-full bg-[#A35E47] inline-block" />
             Built for Indian earners
           </div>
