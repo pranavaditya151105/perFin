@@ -23,12 +23,15 @@ app.use(helmet());
 // CORS configuration: allow all in development, restricted in production
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  'https://www.perfin.me',
+  'https://perfin.me',
   'http://localhost:3000',
   /\.vercel\.app$/ // Allow any Vercel preview/production branch
 ];
 
 app.use(cors({
   origin: config.env === 'production' ? allowedOrigins : true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));

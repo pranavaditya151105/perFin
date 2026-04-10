@@ -138,13 +138,13 @@ export default function GoalsPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 20 }}>
               <div>
                 <label style={secLabel}>Goal Type</label>
-                <select 
+                <input 
+                  type="text"
+                  placeholder="e.g. Dream House"
                   value={newGoal.goal_type} 
                   onChange={e => setNewGoal({...newGoal, goal_type: e.target.value})}
                   style={{ width: '100%', padding: '10px', borderRadius: 6, border: `1px solid ${BORDER}`, marginTop: 6, fontSize: 14 }}
-                >
-                  {['House', 'Car', 'Marriage', 'Education', 'Retirement', 'Travel', 'Luxury', 'Medical', 'Other'].map(v => <option key={v}>{v}</option>)}
-                </select>
+                />
               </div>
               <div>
                 <label style={secLabel}>Target Amount (₹)</label>
