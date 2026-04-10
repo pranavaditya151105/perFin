@@ -1,0 +1,236 @@
+/* Note: Inter font is loaded via next/font in layout.jsx — no blocking @import needed */
+@import "tailwindcss";
+@source "../components";
+@source "../app";
+
+/* Tailwind v4 theme tokens for landing page */
+@theme {
+  --color-stone-50: #fafaf9;
+  --color-stone-100: #f5f5f4;
+  --color-stone-200: #e7e5e4;
+  --color-stone-300: #d6d3d1;
+  --color-stone-400: #a8a29e;
+  --color-stone-500: #78716c;
+  --color-stone-600: #57534e;
+  --color-stone-700: #44403c;
+  --color-stone-800: #292524;
+  --color-stone-900: #1c1917;
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+  --color-amber-900: #78350f;
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-700: #047857;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ============================================================
+   URBAN LOFT COLOR SYSTEM
+   --rust:    #A35E47  (primary action, accent)
+   --black:   #000000  (headings, dark text)
+   --dark:    #464646  (secondary text)
+   --gray:    #9C9A9A  (borders, muted text)
+   ============================================================ */
+
+:root {
+  --bg-primary:    #FAFAFA;
+  --bg-secondary:  #F0F0F0;
+  --bg-card:       #FFFFFF;
+  --border:        #9C9A9A;
+  --border-accent: #000000;
+  --text-primary:  #000000;
+  --text-secondary:#464646;
+  --text-muted:    #9C9A9A;
+  --accent:        #A35E47;
+  --accent-light:  #B57A68;
+  --accent-tint:   rgba(163,94,71,0.1);
+  --highlight:     #E8DEDC;
+  --success:       #A35E47;
+  --warning:       #464646;
+  --danger:        #000000;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scoped reset for dashboard shell only — does NOT affect landing page */
+.app-shell * { margin: 0; padding: 0; }
+.app-shell {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Cards ── */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.hover-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12) !important;
+  z-index: 10;
+}
+
+/* ── Buttons ── */
+.btn-accent {
+  background: var(--accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.01em;
+}
+.btn-accent:hover { background: #000000; }
+.btn-accent:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Inputs ── */
+.input-field {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+}
+.input-field:focus { border-color: var(--accent); }
+.input-field::placeholder { color: var(--text-muted); }
+select.input-field { appearance: none; cursor: pointer; }
+.input-field::-webkit-calendar-picker-indicator,
+.input-field::-webkit-list-button {
+  display: none !important;
+  opacity: 0 !important;
+  -webkit-appearance: none !important;
+}
+input[list].input-field {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: none !important;
+}
+
+/* Remove arrows/spinners from number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  margin: 0 !important;
+}
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+.input-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ── Progress bar ── */
+.progress-bar {
+  height: 13px;
+  border-radius: 6.5px;
+  background: var(--bg-secondary);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 7px;
+  background: var(--accent);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 4px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+}
+.badge-success { background: rgba(163,94,71,0.14); color: #A35E47; }
+.badge-warning { background: rgba(70,70,70,0.18); color: #464646; }
+.badge-danger  { background: rgba(0,0,0,0.12); color: #000000; }
+.badge-info    { background: rgba(156,154,154,0.4); color: #464646; }
+
+/* ── Pulse dot ── */
+.pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+/* ── Navbar ── */
+@media (min-width: 801px) {
+  .mobile-toggle { display: none !important; }
+}
+@media (max-width: 800px) {
+  .desktop-nav { display: none !important; }
+}
+
+
+/* ============================================================
+   AUTH PAGES
+   Re-designed with Tailwind — legacy classes removed.
+   AuthShell.jsx and login/signup pages use inline Tailwind.
+   ============================================================ */
+
+/* Loading spinner animation (used in auth buttons) */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 0.75s linear infinite;
+}
+

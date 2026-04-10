@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment
+.env*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/Editor
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+~$*
+*.tmp
+.vscode/settings.json
+.idea/
+
+# Runtime
+.next/
+out/
+build/
+dist/
+coverage/
+
+# Python (if any)
+__pycache__/
+venv/
+.venv/
+
+# Backend temp files
+**/backend/~$*.xlsx
+**/bank_stmt.xlsx  # Sample data - add to repo if needed
+
+# Frontend (Next.js)
+.vercel
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
