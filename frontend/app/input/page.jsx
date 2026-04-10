@@ -213,6 +213,7 @@ export default function InputPage() {
         return (value === undefined || value === null) ? fallback : value;
       };
 
+      setLocalProfile(prev => ({
         ...prev,
         // Map backend keys from the new nested structure (v2.0)
         incomes: [{ 
