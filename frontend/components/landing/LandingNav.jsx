@@ -8,6 +8,7 @@ import Link from 'next/link';
 const navLinks = [
   { href: '#features', label: 'Features' },
   { href: '#how-it-works', label: 'How it Works' },
+  { href: '/chat', label: 'AI Advisor' },
   { href: '#privacy', label: 'Privacy' },
   { href: '#who', label: 'For Who' },
 ];
@@ -29,7 +30,7 @@ export default function LandingNav() {
           </div>
 
           {/* Links - Absolute Centering for perfect alignment */}
-          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 gap-8 text-sm font-medium text-stone-300">
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 gap-8 items-center text-sm font-medium text-stone-300">
             {navLinks.map(({ href, label }) => (
               <a
                 key={href}
@@ -43,6 +44,14 @@ export default function LandingNav() {
 
           {/* CTA - flex-1 and justify-end to balance the logo */}
           <div className="flex-1 flex justify-end items-center gap-4">
+            <a
+              href="https://stocks1-n891.onrender.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:block text-stone-400 hover:text-white text-sm font-medium transition-colors"
+            >
+              Stock Analyzer
+            </a>
             <Link
               href="/login"
               className="hidden md:block bg-[#A35E47] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-[#A35E47]/90 transition-colors shadow-lg"
@@ -78,6 +87,15 @@ export default function LandingNav() {
                   {label}
                 </a>
               ))}
+              <a
+                href="https://stocks1-n891.onrender.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors text-[#A35E47]"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Stock Analyzer
+              </a>
               <Link
                 href="/login"
                 className="bg-[#A35E47] text-white px-5 py-2.5 rounded-full text-sm font-medium w-full mt-1 hover:bg-[#A35E47]/90 transition-colors text-center block"

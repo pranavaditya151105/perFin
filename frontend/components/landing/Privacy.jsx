@@ -29,11 +29,6 @@ const privacyFeatures = [
     title: 'You own your data',
     desc: "Delete your data anytime. We don't sell, share, or train on your personal financial info.",
   },
-  {
-    icon: ServerOff,
-    title: 'Session-only processing',
-    desc: 'Documents are parsed in your session only. Nothing stored server-side after analysis.',
-  },
 ];
 
 const dataFlow = [

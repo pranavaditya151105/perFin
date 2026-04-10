@@ -58,17 +58,36 @@ export default function AuthShell({ children, title, subtitle, step, totalSteps 
       </Link>
 
       {/* Logo top center */}
-      <Link
-        href="/"
-        className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20"
-      >
-        <div
-          className="flex items-center gap-1.5 text-white font-bold text-lg tracking-tight"
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-20">
+        <Link
+          href="/"
+          className="flex items-center gap-2"
         >
-          <TrendingUp className="w-5 h-5" style={{ color: '#A35E47' }} />
-          PerFinAI
+          <div
+            className="flex items-center gap-1.5 text-white font-bold text-lg tracking-tight"
+          >
+            <TrendingUp className="w-5 h-5" style={{ color: '#A35E47' }} />
+            PerFinAI
+          </div>
+        </Link>
+        <div className="w-px h-5 bg-stone-700/50" />
+        <div className="flex items-center gap-4">
+          <Link
+            href="/chat"
+            className="text-stone-300 hover:text-white transition-colors text-sm font-medium"
+          >
+            AI Advisor
+          </Link>
+          <a
+            href="https://stocks1-n891.onrender.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-stone-300 hover:text-white transition-colors text-sm font-medium px-3 py-1.5 rounded-full border border-stone-700/50 hover:bg-[#A35E47]/10 hover:border-[#A35E47]/50"
+          >
+            Stock Analyzer
+          </a>
         </div>
-      </Link>
+      </div>
 
       {/* Main pill card */}
       <motion.div

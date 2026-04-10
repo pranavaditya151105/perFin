@@ -13,6 +13,7 @@ const links = [
   { href: '/goals', label: 'Goals' },
   { href: '/chat', label: 'AI Advisor' },
   { href: '/learn', label: 'Learn' },
+  { href: 'https://stocks1-n891.onrender.com/', label: 'Stock Analyzer', external: true },
 ];
 
 const OLIVE = '#A35E47';
@@ -56,14 +57,25 @@ export default function Navbar() {
             isAuthenticated ? (
               <>
                 {links.map(l => (
-                  <Link key={l.href} href={l.href} style={{
-                    padding: '5px 12px', borderRadius: 5, fontSize: 13, fontWeight: 500,
-                    textDecoration: 'none', letterSpacing: '0.01em',
-                    color: isActive(l.href) ? OLIVE : MUTED,
-                    background: isActive(l.href) ? 'rgba(163,94,71,0.1)' : 'transparent',
-                  }}>
-                    {l.label}
-                  </Link>
+                  l.external ? (
+                    <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" style={{
+                      padding: '5px 12px', borderRadius: 5, fontSize: 13, fontWeight: 500,
+                      textDecoration: 'none', letterSpacing: '0.01em',
+                      color: MUTED,
+                      background: 'transparent',
+                    }}>
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link key={l.href} href={l.href} style={{
+                      padding: '5px 12px', borderRadius: 5, fontSize: 13, fontWeight: 500,
+                      textDecoration: 'none', letterSpacing: '0.01em',
+                      color: isActive(l.href) ? OLIVE : MUTED,
+                      background: isActive(l.href) ? 'rgba(163,94,71,0.1)' : 'transparent',
+                    }}>
+                      {l.label}
+                    </Link>
+                  )
                 ))}
                 <Link href="/input" style={{ marginLeft: 8, display: 'flex', alignItems: 'center' }}>
                   <img 
@@ -106,10 +118,17 @@ export default function Navbar() {
           {isAuthenticated ? (
             <>
               {links.map(l => (
-                <Link key={l.href} href={l.href} onClick={() => setMobileMenuOpen(false)}
-                  style={{ padding: '9px 10px', borderRadius: 5, fontSize: 13, fontWeight: 500, textDecoration: 'none', color: isActive(l.href) ? OLIVE : MUTED, background: isActive(l.href) ? 'rgba(99,107,47,0.08)' : 'transparent' }}>
-                  {l.label}
-                </Link>
+                l.external ? (
+                  <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)}
+                    style={{ padding: '9px 10px', borderRadius: 5, fontSize: 13, fontWeight: 500, textDecoration: 'none', color: MUTED, background: 'transparent' }}>
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link key={l.href} href={l.href} onClick={() => setMobileMenuOpen(false)}
+                    style={{ padding: '9px 10px', borderRadius: 5, fontSize: 13, fontWeight: 500, textDecoration: 'none', color: isActive(l.href) ? OLIVE : MUTED, background: isActive(l.href) ? 'rgba(99,107,47,0.08)' : 'transparent' }}>
+                    {l.label}
+                  </Link>
+                )
               ))}
               <div style={{ height: 1, background: BORDER, margin: '4px 0' }} />
               <Link href="/input" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>

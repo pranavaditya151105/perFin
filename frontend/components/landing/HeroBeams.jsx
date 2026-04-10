@@ -36,8 +36,8 @@ export default function HeroBeams() {
           </h1>
 
           <p className="text-lg md:text-2xl text-stone-300 mb-10 max-w-2xl leading-relaxed">
-            PerFinAI reads your bank statement, tax filings, and payslips — then tells you
-            exactly what to do next. No spreadsheets. No jargon.
+            PerFin reads your bank statement, tax filings, and payslips — then tells you
+            exactly what to do next. Just spreadsheets. No jargon.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
